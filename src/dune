@@ -1,2 +1,6 @@
-(library (name profunctor) (public_name profunctor)
- (libraries base record_builder) (preprocess (pps ppx_jane)))
+(library
+ (name profunctor)
+ (public_name profunctor)
+ (libraries base record_builder)
+ (preprocess
+  (pps ppx_jane)))

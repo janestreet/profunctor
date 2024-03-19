@@ -26,22 +26,23 @@ module Interfaces = struct
       the contravariant mapping of each field.
 
       {[
-        type t = {
-          name : string;
-          age : int;
-        } [@@deriving fields]
+        type t =
+          { name : string
+          ; age : int
+          }
+        [@@deriving fields ~iterators:make_creator]
 
         module F : Profunctor.S = "your module here"
-        module F_of_record = Profunctor.Record_builder(F)
+        module F_of_record = Profunctor.Record_builder (F)
 
         let for_string : (string, string) F.t = "your code here"
         let for_int : (int, int) F.t = "your code here"
 
         let example : (t, t) F.t =
-          F_of_record.(build_for_record (
-            Fields.make_creator
-              ~name:(field for_string)
-              ~age:(field for_int)))
+          F_of_record.(
+            build_for_record
+              (Fields.make_creator ~name:(field for_string) ~age:(field for_int)))
+        ;;
       ]}
 
       This is equivalent to:
@@ -49,10 +50,8 @@ module Interfaces = struct
       {[
         let example : (t, t) F.t =
           let name = F.contra_map ~f:name for_string
-          and age = F.contra_map ~f:age for_int
-          in
-          F.map (F.both name age) ~f:(fun (name, age) ->
-            { name; age; })
+          and age = F.contra_map ~f:age for_int in
+          F.map (F.both name age) ~f:(fun (name, age) -> { name; age })
         ;;
       ]}
   *)

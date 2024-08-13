@@ -114,8 +114,8 @@ module Interfaces = struct
 
     module Of_record :
       Record_builder
-        with type 'a profunctor_term = 'a applicative
-         and type ('b, 'a) profunctor = ('b, 'a) t
+      with type 'a profunctor_term = 'a applicative
+       and type ('b, 'a) profunctor = ('b, 'a) t
   end
 
   (** A profunctor-ish where both parameters must be mapped together
@@ -143,8 +143,8 @@ module Interfaces = struct
 
     module Of_record :
       Record_builder
-        with type 'a profunctor_term = 'a conv_based
-         and type ('b, 'a) profunctor = ('b, 'a) t
+      with type 'a profunctor_term = 'a conv_based
+       and type ('b, 'a) profunctor = ('b, 'a) t
   end
 end
 
@@ -153,8 +153,8 @@ module type Profunctor = sig
 
   module Record_builder (F : S) :
     Record_builder
-      with type ('b, 'a) profunctor = ('b, 'a) F.t
-       and type 'a profunctor_term = ('a, 'a) F.t
+    with type ('b, 'a) profunctor = ('b, 'a) F.t
+     and type 'a profunctor_term = ('a, 'a) F.t
 
   module Of_applicative (F : Applicative.S) :
     Of_applicative with type 'a applicative := 'a F.t
@@ -191,7 +191,7 @@ module type Profunctor = sig
 
     module Of_record :
       Record_builder
-        with type ('b, 'a) profunctor = ('b, 'a) t
-         and type 'a profunctor_term = ('a, 'a) t
+      with type ('b, 'a) profunctor = ('b, 'a) t
+       and type 'a profunctor_term = ('a, 'a) t
   end
 end

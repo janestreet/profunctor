@@ -1,10 +1,8 @@
 open Base
 
 module Interfaces = struct
-  (** A profunctor has an input end with contravariant map, an output
-      end with covariant map and an operation to join two terms with
-      the same input type giving both outputs.
-  *)
+  (** A profunctor has an input end with contravariant map, an output end with covariant
+      map and an operation to join two terms with the same input type giving both outputs. *)
   module type S = sig
     type ('b, 'a) t
 
@@ -14,16 +12,15 @@ module Interfaces = struct
   end
   (** @open *)
 
-  (** A module used to traverse each field of a record performing some
-      action using a specific profunctor.
+  (** A module used to traverse each field of a record performing some action using a
+      specific profunctor.
 
       You can construct a record builder for a given profunctor using
-      {{!module-Profunctor.module-Record_builder}Record_builder}.
+      {{!module-Profunctor.module-Record_builder} Record_builder}.
 
-      This is based on the library {!module-Record_builder}
-      (which provides traversal with an
-      {{!modtype:Base.Applicative.S}applicative}) and adds
-      the contravariant mapping of each field.
+      This is based on the library {!module-Record_builder} (which provides traversal with
+      an {{!modtype:Base.Applicative.S} applicative}) and adds the contravariant mapping
+      of each field.
 
       {[
         type t =
@@ -53,35 +50,29 @@ module Interfaces = struct
           and age = F.contra_map ~f:age for_int in
           F.map (F.both name age) ~f:(fun (name, age) -> { name; age })
         ;;
-      ]}
-  *)
+      ]} *)
   module type Record_builder = sig
     type ('b, 'a) profunctor
 
-    (** A term of the profunctor where the input and output type are
-        the same.
+    (** A term of the profunctor where the input and output type are the same.
 
-        Although this module must use the type parameters separately
-        internally all terms supplied as arguments or returned will
-        have both type parameters equal. This type alias is used to
-        allow automatically converting with some other type in some
-        cases e.g. {!module-Of_conv_based}.
-    *)
+        Although this module must use the type parameters separately internally all terms
+        supplied as arguments or returned will have both type parameters equal. This type
+        alias is used to allow automatically converting with some other type in some cases
+        e.g. {!module-Of_conv_based}. *)
     type 'a profunctor_term
 
     val prj : ('a, 'a) profunctor -> 'a profunctor_term
     val inj : 'a profunctor_term -> ('a, 'a) profunctor
 
-    (** The underlying applicative record builder,
-        which does not perform the contravariant mapping.
-    *)
+    (** The underlying applicative record builder, which does not perform the
+        contravariant mapping. *)
     module Bare : Record_builder.S2 with type ('b, 'a) applicative = ('b, 'a) profunctor
 
     (** Supply the term for one field.
 
-        The type of this function is designed to match up with [Fields.make_creator]
-        (see the example).
-    *)
+        The type of this function is designed to match up with [Fields.make_creator] (see
+        the example). *)
     val field
       :  'field profunctor_term
       -> ('record, 'field) Field.t
@@ -89,23 +80,21 @@ module Interfaces = struct
 
     (** Build the overarching profunctor for the whole record.
 
-        This takes a partial application of [Fields.make_creator] as its argument,
-        which should supply no initial value but use {!field} to supply a term
-        for every field of the record.
+        This takes a partial application of [Fields.make_creator] as its argument, which
+        should supply no initial value but use {!field} to supply a term for every field
+        of the record.
 
-        The type of this is designed to match up with [Fields.make_creator]
-        (see the example).
-    *)
+        The type of this is designed to match up with [Fields.make_creator] (see the
+        example). *)
     val build_for_record
       :  ('record, _, 'record) Bare.Make_creator_types.handle_all_fields
       -> 'record profunctor_term
   end
 
-  (** A profunctor constructed from an {{!modtype:Base.Applicative.S}applicative}.
+  (** A profunctor constructed from an {{!modtype:Base.Applicative.S} applicative}.
 
-      In this case [contra_map] has no effect, and [map] and [both]
-      behave exactly as they would with the underlying applicative.
-  *)
+      In this case [contra_map] has no effect, and [map] and [both] behave exactly as they
+      would with the underlying applicative. *)
   module type Of_applicative = sig
     type 'a applicative
     type ('b, 'a) t = 'b applicative
@@ -114,14 +103,12 @@ module Interfaces = struct
 
     module Of_record :
       Record_builder
-        with type 'a profunctor_term = 'a applicative
-         and type ('b, 'a) profunctor = ('b, 'a) t
+      with type 'a profunctor_term = 'a applicative
+       and type ('b, 'a) profunctor = ('b, 'a) t
   end
 
-  (** A profunctor-ish where both parameters must be mapped together
-      at the same time. This is less expressive but appears in
-      several libraries.
-  *)
+  (** A profunctor-ish where both parameters must be mapped together at the same time.
+      This is less expressive but appears in several libraries. *)
   module type Conv_based = sig
     type 'a t
 
@@ -129,9 +116,8 @@ module Interfaces = struct
     val both : 'a t -> 'b t -> ('a * 'b) t
   end
 
-  (** Embed a {!modtype:Conv_based} profunctor-ish into a full profunctor,
-      allowing the use of {!modtype:Record_builder} directly.
-  *)
+  (** Embed a {!modtype:Conv_based} profunctor-ish into a full profunctor, allowing the
+      use of {!modtype:Record_builder} directly. *)
   module type Of_conv_based = sig
     type 'a conv_based
     type ('b, 'a) t
@@ -143,8 +129,8 @@ module Interfaces = struct
 
     module Of_record :
       Record_builder
-        with type 'a profunctor_term = 'a conv_based
-         and type ('b, 'a) profunctor = ('b, 'a) t
+      with type 'a profunctor_term = 'a conv_based
+       and type ('b, 'a) profunctor = ('b, 'a) t
   end
 end
 
@@ -153,21 +139,19 @@ module type Profunctor = sig
 
   module Record_builder (F : S) :
     Record_builder
-      with type ('b, 'a) profunctor = ('b, 'a) F.t
-       and type 'a profunctor_term = ('a, 'a) F.t
+    with type ('b, 'a) profunctor = ('b, 'a) F.t
+     and type 'a profunctor_term = ('a, 'a) F.t
 
   module Of_applicative (F : Applicative.S) :
     Of_applicative with type 'a applicative := 'a F.t
 
   module Of_conv_based (F : Conv_based) : Of_conv_based with type 'a conv_based := 'a F.t
 
-  (** A profunctor which represents a function where
-      [Fn.id] may sometimes be distinguished from other
-      functions.
+  (** A profunctor which represents a function where [Fn.id] may sometimes be
+      distinguished from other functions.
 
-      This is primarily used internally to implement other
-      things where discarding identity functions can be advantageous.
-  *)
+      This is primarily used internally to implement other things where discarding
+      identity functions can be advantageous. *)
   module Fn_with_id : sig
     type ('b, 'a) t =
       | Id : ('a, 'a) t
@@ -181,9 +165,8 @@ module type Profunctor = sig
     (** Unpack the function, [as_fn (of_fn x) ≡ Staged.stage x]. *)
     val as_fn : ('b, 'a) t -> ('a -> 'b) Staged.t
 
-    (** [split l r ≡ both (contra_map ~f:fst l) (contra_map ~f:snd r)],
-        but is more efficient (the result may be [Id]).
-    *)
+    (** [split l r ≡ both (contra_map ~f:fst l) (contra_map ~f:snd r)], but is more
+        efficient (the result may be [Id]). *)
     val split : ('b, 'a) t -> ('d, 'c) t -> ('b * 'd, 'a * 'c) t
 
     (** Composition of function, [as_fn (compose g f) ≡ Fn.compose (as_fn g) (as_fn f)]. *)
@@ -191,7 +174,7 @@ module type Profunctor = sig
 
     module Of_record :
       Record_builder
-        with type ('b, 'a) profunctor = ('b, 'a) t
-         and type 'a profunctor_term = ('a, 'a) t
+      with type ('b, 'a) profunctor = ('b, 'a) t
+       and type 'a profunctor_term = ('a, 'a) t
   end
 end

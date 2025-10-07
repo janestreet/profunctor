@@ -2,12 +2,13 @@ open Base
 include Profunctor_intf.Interfaces
 
 module Record_builder_internal
-  (F : S) (T : sig
-    type 'a profunctor_term
+    (F : S)
+    (T : sig
+       type 'a profunctor_term
 
-    val prj : ('a, 'a) F.t -> 'a profunctor_term
-    val inj : 'a profunctor_term -> ('a, 'a) F.t
-  end) =
+       val prj : ('a, 'a) F.t -> 'a profunctor_term
+       val inj : 'a profunctor_term -> ('a, 'a) F.t
+     end) =
 struct
   include T
 

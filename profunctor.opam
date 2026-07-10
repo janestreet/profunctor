@@ -18,6 +18,9 @@ depends: [
   "dune"           {>= "3.17.0"}
 ]
 available: arch != "x86_32"
+conflicts: [
+  "oxcaml-compiler" {< "5.2.0minus39"}
+]
 synopsis: "A library providing a signature for simple profunctors and traversal of a record"
 description: "
 This is a very small library which provides a signature for profunctor types
